@@ -1,5 +1,8 @@
+from __future__ import absolute_import
 import requests
 from bs4 import BeautifulSoup
+
+from .exceptions import InvalidWebSVN
 
 class WebSVNs(object):
     def __init__(self, urlbase, reponame, path="/", rev="HEAD"):
@@ -33,8 +36,11 @@ class WebSVNs(object):
             self.setRevision(rev).setURL().loadpage()
         if self.s == None:
             self.loadpage()
-        info = self.s.find(class_="info").text
-        message = self.s.find(class_="msg").text
+        try:
+            info = self.s.find(class_="info").text
+            message = self.s.find(class_="msg").text
+        except AttributeError:
+            raise InvalidWebSVN()
         return (info,message)
 
     def getChanges(self,rev=None):
