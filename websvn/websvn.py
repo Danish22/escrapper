@@ -11,6 +11,7 @@ class WebSVNs(object):
         self.path = path
         self.rev = rev
         self.s = None
+        self.template = None
         ## Set URL
         self.setURL()
 
@@ -27,19 +28,33 @@ class WebSVNs(object):
                     r=self.reponame, p=self.path, rev=self.rev)
         return self
 
+    def getTemplate(self):
+        """ Procedure to infer wich template is using"""
+        if self.template == None:
+            self.template = self.s.find(id="template")\
+                               .find("option",selected="selected")\
+                               .text
+        return self
+
+
     def loadpage(self):
         ## Request page
         page = requests.get(self.url)
         ## Process the HTML DOM
         self.s = BeautifulSoup(page.text)
-        return self
+        return self.getTemplate()
 
     def getInfo(self,rev=None):
         if self.setRevision(rev).s == None:
             self.loadpage()
         try:
-            info = self.s.find(class_="info").text
-            message = self.s.find(class_="msg").text
+            if self.template==u"calm":
+                ul = self.s.find(id="info").find("ul").find_all("li")
+                info = ul[0].text + ul[1].text
+                message = ul[2].text
+            elif self.template==u"Elegant":
+                info = self.s.find(class_="info").text
+                message = self.s.find(class_="msg").text
         except AttributeError:
             raise InvalidWebSVN()
         return (info,message)
