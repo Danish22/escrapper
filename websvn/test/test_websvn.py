@@ -1,19 +1,29 @@
 from websvn import WebSVNs
 
-urlbase = "http://websvn.meneame.net"
-W = WebSVNs(urlbase,"meneame")
+## Test URLs
+urls = {"elegant": ("http://websvn.meneame.net","meneame"),
+        "calm": ("http://demo.websvn.info","WebSVN")}
+Objs = {}
+
+for k,v in urls.items():
+   Objs[k] = WebSVNs(v[0],v[1])
 
 def test_created():
-    assert isinstance(W,WebSVNs)
+    """ Test if we can create the objects  """
+    for o in Objs.itervalues():
+        assert isinstance(o,WebSVNs)
 
 def test_getinfo():
-    ## Can call getInfo() without parameters (means HEAD),
-    ## Of course, that will not be a good test
-    r,_ = W.getInfo(3771)
-    assert r.split("\n")[0] == u'Rev 3771'
+    """ Test if we can getinfo of the current revision """
+    for o in Objs.itervalues():
+        r = o.getInfo()
+        assert type(r) == tuple
 
 def test_setRevision():
-    assert W.setRevision(3138).rev == 3138
+    """ Test if we can set the revision """
+    assert Objs["elegant"].setRevision(3138).rev == 3138
 
 def test_setURL():
-    assert W.setURL().url == urlbase+"/revision.php?meneame&path=///&rev=3138"
+    """ Test if we change the URL correctly """
+    assert Objs["elegant"].setURL().url == urls["elegant"][0]\
+                    +"/revision.php?meneame&path=///&rev=3138"
