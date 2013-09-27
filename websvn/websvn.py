@@ -15,7 +15,10 @@ class WebSVNs(object):
         self.setURL()
 
     def setRevision(self,rev):
-        self.rev = rev
+        if rev != None and rev != self.rev :
+            self.rev = rev
+            self.setURL()
+            self.s = None
         return self
 
     def setURL(self,action="revision.php"):
@@ -32,9 +35,7 @@ class WebSVNs(object):
         return self
 
     def getInfo(self,rev=None):
-        if rev != self.rev :
-            self.setRevision(rev).setURL().loadpage()
-        if self.s == None:
+        if self.setRevision(rev).s == None:
             self.loadpage()
         try:
             info = self.s.find(class_="info").text
@@ -44,9 +45,7 @@ class WebSVNs(object):
         return (info,message)
 
     def getChanges(self,rev=None):
-        if rev != self.rev :
-            self.setRevision(rev).setURL().loadpage()
-        if self.s == None:
+        if self.setRevision(rev).s == None:
             self.loadpage()
         ## The possible modes D = Deleted , "A" = Added, "M" = Modified
         modes = (u"D",u"A",u"M")
