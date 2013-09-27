@@ -7,6 +7,7 @@ class WebSVN(object):
         self.reponame = reponame
         self.path = path
         self.rev = rev
+        self.s = None
         ## Set URL
         self.setURL()
 
@@ -20,18 +21,32 @@ class WebSVN(object):
                     r=self.reponame, p=self.path, rev=self.rev)
         return self
 
-    def Scrap(self,rev=None):
-        if rev != None:
-          self.setRevision(rev).setURL()
+    def loadpage(self):
         ## Request page
         page = requests.get(self.url)
         ## Process the HTML DOM
-        s = BeautifulSoup(page.text)
+        self.s = BeautifulSoup(page.text)
+        return self
+
+    def getInfo(self,rev=None):
+        if rev != self.rev :
+            self.setRevision(rev).setURL().loadpage()
+        if self.s == None:
+            self.loadpage()
+        info = self.s.find(class_="info").text
+        message = self.s.find(class_="msg").text
+        return (info,message)
+
+    def getChanges(self,rev=None):
+        if rev != self.rev :
+            self.setRevision(rev).setURL().loadpage()
+        if self.s == None:
+            self.loadpage()
         ## The possible modes D = Deleted , "A" = Added, "M" = Modified
         modes = (u"D",u"A",u"M")
         for v in modes:
             ## Search in the DOM tree for a "TR" element, with class v
-            for tr in s.find_all("tr", class_=v):
+            for tr in self.s.find_all("tr", class_=v):
                 ## for every TR search the anchor with class "path"
                 a = tr.find("td", class_="path").a
                 ## get the href
