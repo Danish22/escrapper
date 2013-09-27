@@ -1,6 +1,6 @@
 from websvn import WebSVNs
 
-urlbase = "http://meneame.net"
+urlbase = "http://websvn.meneame.net"
 W = WebSVNs(urlbase,"meneame")
 
 def test_created():
