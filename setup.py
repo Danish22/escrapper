@@ -5,7 +5,7 @@ import io
 import os
 import sys
 
-import websvn
+import escrapper
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -32,20 +32,20 @@ class PyTest(TestCommand):
         sys.exit(errcode)
 
 setup(
-    name='websvn',
-    version=websvn.__version__,
+    name='escrapper',
+    version=escrapper.__version__,
     url='http://github.com/esparta/websvn/',
     license='Apache Software License',
-    author=websvn.__author__,
+    author=escrapper.__author__,
     tests_require=['pytest'],
     install_requires=['beautifulsoup4>=4.3.1',
                     'requests>=1.2.3'
                     ],
     cmdclass={'test': PyTest},
     author_email='esparta@gmail.com',
-    description='Scrapping for WebSVN portal ',
+    description='Scrapping tool, can process WebSVN portal ',
     long_description=long_description,
-    packages=['websvn'],
+    packages=['WebSVN'],
     include_package_data=True,
     platforms='any',
     test_suite='websvn.test_app',

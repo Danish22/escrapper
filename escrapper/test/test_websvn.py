@@ -1,4 +1,4 @@
-from websvn import WebSVNs
+from escrapper import WebSVN
 
 ## Test URLs
 urls = {"elegant": ("http://websvn.meneame.net","meneame"),
@@ -6,12 +6,12 @@ urls = {"elegant": ("http://websvn.meneame.net","meneame"),
 Objs = {}
 
 for k,v in urls.items():
-   Objs[k] = WebSVNs(v[0],v[1])
+   Objs[k] = WebSVN(v[0],v[1])
 
 def test_created():
     """ Test if we can create the objects  """
     for o in Objs.itervalues():
-        assert isinstance(o,WebSVNs)
+        assert isinstance(o,WebSVN)
 
 def test_getinfo():
     """ Test if we can getinfo of the current revision """

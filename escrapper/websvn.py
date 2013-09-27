@@ -1,18 +1,14 @@
 from __future__ import absolute_import
-import requests
-from bs4 import BeautifulSoup
-
 from .exceptions import InvalidWebSVN
+from .escrapper import eBaseScrapper
 
-class WebSVNs(object):
+class WebSVN(eBaseScrapper):
     def __init__(self, urlbase, reponame, path="/", rev="HEAD"):
-        self.urlbase = urlbase
+        eBaseScrapper.__init__(self,urlbase)
         self.reponame = reponame
         self.path = path
         self.rev = rev
-        self.s = None
         self.template = None
-        ## Set URL
         self.setURL()
 
     def setRevision(self,rev):
@@ -29,24 +25,16 @@ class WebSVNs(object):
         return self
 
     def getTemplate(self):
-        """ Procedure to infer wich template is using"""
+        """ Procedure to infer which template is using"""
         if self.template == None:
             self.template = self.s.find(id="template")\
                                .find("option",selected="selected")\
                                .text
         return self
 
-
-    def loadpage(self):
-        ## Request page
-        page = requests.get(self.url)
-        ## Process the HTML DOM
-        self.s = BeautifulSoup(page.text)
-        return self.getTemplate()
-
     def getInfo(self,rev=None):
         if self.setRevision(rev).s == None:
-            self.loadpage()
+            self.loadpage().getTemplate()
         try:
             if self.template==u"calm":
                 ul = self.s.find(id="info").find("ul").find_all("li")
@@ -61,7 +49,7 @@ class WebSVNs(object):
 
     def getChanges(self,rev=None):
         if self.setRevision(rev).s == None:
-            self.loadpage()
+            self.loadpage().getTemplate()
         ## The possible modes D = Deleted , "A" = Added, "M" = Modified
         modes = (u"D",u"A",u"M")
         for v in modes:
