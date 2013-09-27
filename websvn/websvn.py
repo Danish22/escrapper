@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-class WebSVN(object):
+class WebSVNs(object):
     def __init__(self, urlbase, reponame, path="/", rev="HEAD"):
         self.urlbase = urlbase
         self.reponame = reponame
