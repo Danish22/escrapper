@@ -34,7 +34,7 @@ class PyTest(TestCommand):
 setup(
     name='escrapper',
     version=escrapper.__version__,
-    url='http://github.com/esparta/websvn/',
+    url='http://github.com/esparta/escrapper',
     license='Apache Software License',
     author=escrapper.__author__,
     tests_require=['pytest'],
@@ -45,10 +45,10 @@ setup(
     author_email='esparta@gmail.com',
     description='Scrapping tool, can process WebSVN portal ',
     long_description=long_description,
-    packages=['WebSVN'],
+    packages=['escrapper'],
     include_package_data=True,
     platforms='any',
-    test_suite='websvn.test_app',
+    test_suite='escrapper.test_app',
     classifiers = [
         'Programming Language :: Python',
         'Development Status :: 1 - Beta',
