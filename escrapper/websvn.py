@@ -32,9 +32,15 @@ class WebSVN(eBaseScrapper):
                                .text
         return self
 
+    def checkRevision(fn):
+        def wrapper(self,rev=None):
+            if self.setRevision(rev).s == None:
+                self.loadpage().getTemplate()
+            return fn(self,rev)
+        return wrapper
+
+    @checkRevision
     def getInfo(self,rev=None):
-        if self.setRevision(rev).s == None:
-            self.loadpage().getTemplate()
         try:
             if self.template==u"calm":
                 ul = self.s.find(id="info").find("ul").find_all("li")
@@ -47,9 +53,8 @@ class WebSVN(eBaseScrapper):
             raise InvalidWebSVN()
         return (info,message)
 
+    @checkRevision
     def getChanges(self,rev=None):
-        if self.setRevision(rev).s == None:
-            self.loadpage().getTemplate()
         ## The possible modes D = Deleted , "A" = Added, "M" = Modified
         modes = (u"D",u"A",u"M")
         for v in modes:
