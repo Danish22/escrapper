@@ -3,25 +3,20 @@ from .exceptions import InvalidWebSVN
 from .escrapper import eBaseScrapper
 
 class WebSVN(eBaseScrapper):
-    def __init__(self, urlbase, reponame, path="/", rev="HEAD"):
-        eBaseScrapper.__init__(self,urlbase)
-        self.reponame = reponame
-        self.path = path
-        self.rev = rev
+    def __init__(self, urlbase, **params):
+        eBaseScrapper.__init__(self,urlbase, **params)
         self.template = None
         self.setURL()
 
     def setRevision(self,rev):
-        if rev != None and rev != self.rev :
-            self.rev = rev
+        if rev != None and rev != self.params.get('rev',''):
+            self.params['rev'] = rev
             self.setURL()
             self.s = None
         return self
 
-    def setURL(self,action="revision.php"):
-        self.url = "{url}/{a}?{r}&path=/{p}/&rev={rev}"\
-            .format(url=self.urlbase, a=action,
-                    r=self.reponame, p=self.path, rev=self.rev)
+    def setURL(self, page="revision.php"):
+        eBaseScrapper.setURL(self,page)
         return self
 
     def getTemplate(self):
