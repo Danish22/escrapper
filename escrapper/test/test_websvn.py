@@ -19,6 +19,13 @@ def test_getinfo():
         r = o.getInfo()
         assert type(r) == tuple
 
+def test_getChanges():
+    """ Test if we can get the Changes of the current revision"""
+    for o in Objs.itervalues():
+        r = o.getChanges()
+        ## is an iterable? in this case is a generator
+        assert hasattr(r,'__iter__')
+
 def test_setRevision():
     """ Test if we can set the revision """
     assert Objs["elegant"].setRevision(3138).rev == 3138
