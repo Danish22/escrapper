@@ -13,18 +13,18 @@ for k,v in urls.items():
 
 def test_created():
     """ Test if we can create the objects  """
-    for o in Objs.itervalues():
+    for o in Objs.values():
         assert isinstance(o,WebSVN)
 
 def test_getinfo():
     """ Test if we can getinfo of the current revision """
-    for o in Objs.itervalues():
+    for o in Objs.values():
         r = o.getInfo()
         assert type(r) == tuple
 
 def test_getChanges():
     """ Test if we can get the Changes of the current revision"""
-    for o in Objs.itervalues():
+    for o in Objs.values():
         r = o.getChanges()
         ## is an iterable? in this case it should be a generator
         assert hasattr(r,'__iter__')
