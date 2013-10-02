@@ -58,8 +58,12 @@ class WebSVN(eBaseScrapper):
                 ## for every TR search the anchor with class "path"
                 a = tr.find("td", class_="path").a
                 ## get the href
-                href = u"{u}/{h}"\
+                filedetails = u"{u}/{h}"\
                         .format(u=self.urlbase,
-                                h=a["href"].replace("filedetails.php?",
-                                                    "dl.php?"))
-                yield ({"type": v, "file": a.text, "href": href})
+                                h=a["href"])
+                download = filedetails.replace("filedetails.php?",
+                                                    "dl.php?")
+                yield ({"type": v,
+                        "file": a.text,
+                        "filedetails": filedetails,
+                        "download": download})
