@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from .exceptions import InvalidWebSVN
 from .escrapper import eBaseScrapper
+from . import utils
 
 class WebSVN(eBaseScrapper):
     def __init__(self, urlbase, **params):
@@ -37,11 +38,11 @@ class WebSVN(eBaseScrapper):
     @checkRevision
     def getInfo(self,rev=None):
         try:
-            if self.template==u"calm":
+            if self.template==utils.u("calm"):
                 ul = self.s.find(id="info").find("ul").find_all("li")
                 info = ul[0].text + ul[1].text
                 message = ul[2].text
-            elif self.template==u"Elegant":
+            elif self.template==utils.u("Elegant"):
                 info = self.s.find(class_="info").text
                 message = self.s.find(class_="msg").text
         except AttributeError:
@@ -51,16 +52,16 @@ class WebSVN(eBaseScrapper):
     @checkRevision
     def getChanges(self,rev=None):
         ## The possible modes D = Deleted , "A" = Added, "M" = Modified
-        modes = (u"D",u"A",u"M")
+        modes = map(utils.u,("A","D","M"))
         for v in modes:
             ## Search in the DOM tree for a "TR" element, with class v
             for tr in self.s.find_all("tr", class_=v):
                 ## for every TR search the anchor with class "path"
                 a = tr.find("td", class_="path").a
                 ## get the href
-                filedetails = u"{u}/{h}"\
+                filedetails = utils.u("{u}/{h}"\
                         .format(u=self.urlbase,
-                                h=a["href"])
+                                h=a["href"]))
                 download = filedetails.replace("filedetails.php?",
                                                     "dl.php?")
                 yield ({"type": v,
