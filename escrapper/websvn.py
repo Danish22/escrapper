@@ -52,7 +52,7 @@ class WebSVN(eBaseScrapper):
     @checkRevision
     def getChanges(self,rev=None):
         ## The possible modes D = Deleted , "A" = Added, "M" = Modified
-        modes = map(utils.u,("A","D","M"))
+        modes = utils.u,("ADM")
         for v in modes:
             ## Search in the DOM tree for a "TR" element, with class v
             for tr in self.s.find_all("tr", class_=v):
