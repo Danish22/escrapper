@@ -1,69 +1,89 @@
+"""
+Scrapper thinking on produce an "API" fot the WebSVN portal.
+"""
 from __future__ import absolute_import
 from .exceptions import InvalidWebSVN
-from .escrapper import eBaseScrapper
+from .escrapper import _BaseScrapper
+from . import utils
 
-class WebSVN(eBaseScrapper):
+class WebSVN(_BaseScrapper):
+    """"WebSVN class, a way to produce an interface to WebSVN portals
+        exposes a variety of methods to do an "API" to the data:
+        * General information of the revision: .getinfo()
+        * List of changes: .getchanges()
+        * List of files/directories: .getlisting() **not implemented **
+    """
     def __init__(self, urlbase, **params):
-        eBaseScrapper.__init__(self,urlbase, **params)
+        _BaseScrapper.__init__(self, urlbase, **params)
         self.template = None
-        self.setURL()
+        self._seturl()
 
-    def setRevision(self,rev):
+    def setrevision(self, rev):
+        """ Change the current revision of the SVN """
         if rev != None and rev != self.params.get('rev',''):
             self.params['rev'] = rev
-            self.setURL()
-            self.s = None
+            self._seturl()
+            self.soup = None
         return self
 
-    def setURL(self, page="revision.php"):
-        eBaseScrapper.setURL(self,page)
+    def _seturl(self, page="revision.php"):
+        """ Set the URL to be scrapped """
+        _BaseScrapper.seturl(self, page)
         return self
 
-    def getTemplate(self):
+    def gettemplate(self):
         """ Procedure to infer which template is using"""
         if self.template == None:
-            self.template = self.s.find(id="template")\
-                               .find("option",selected="selected")\
-                               .text
+            self.template = self.soup.find(id="template")\
+                                .find("option",selected="selected")\
+                                .text
         return self
 
-    def checkRevision(fn):
-        def wrapper(self,rev=None):
-            if self.setRevision(rev).s == None:
-                self.loadpage().getTemplate()
-            return fn(self,rev)
+    def _checkrevision(function):
+        """ Before change the revision do some previous checking"""
+        def wrapper(self, rev=None):
+            """ Wrapper to the actual function """
+            if self.setrevision(rev).soup == None:
+                self.loadpage().gettemplate()
+            return function(self, rev)
         return wrapper
 
-    @checkRevision
-    def getInfo(self,rev=None):
+    @_checkrevision
+    def getinfo(self, rev=None):
+        """ Get the general info of the current or given revision """
         try:
-            if self.template==u"calm":
-                ul = self.s.find(id="info").find("ul").find_all("li")
-                info = ul[0].text + ul[1].text
-                message = ul[2].text
-            elif self.template==u"Elegant":
-                info = self.s.find(class_="info").text
-                message = self.s.find(class_="msg").text
+            if self.template == utils.ucode("calm"):
+                thelist = self.soup.find(id="info")\
+                                    .find("ul")\
+                                    .find_all("li")
+                info = thelist[0].text + thelist[1].text
+                message = thelist[2].text
+            elif self.template == utils.ucode("Elegant"):
+                info = self.soup.find(class_="info").text
+                message = self.soup.find(class_="msg").text
         except AttributeError:
             raise InvalidWebSVN()
-        return (info,message)
+        return (info, message)
 
-    @checkRevision
-    def getChanges(self,rev=None):
-        ## The possible modes D = Deleted , "A" = Added, "M" = Modified
-        modes = (u"D",u"A",u"M")
-        for v in modes:
+    @_checkrevision
+    def getchanges(self, rev=None):
+        """ Get the List of changed files on the current or given
+            revision
+        """
+        ## Loop the possible modes A = Added, M = Modified, D = Deleted
+        modes_list = utils.ucode,("AMD")
+        for mode in modes_list:
             ## Search in the DOM tree for a "TR" element, with class v
-            for tr in self.s.find_all("tr", class_=v):
+            for cell in self.soup.find_all("tr", class_=mode):
                 ## for every TR search the anchor with class "path"
-                a = tr.find("td", class_="path").a
+                anchor = cell.find("td", class_="path").a
                 ## get the href
-                filedetails = u"{u}/{h}"\
+                filedetails = utils.ucode("{u}/{h}"\
                         .format(u=self.urlbase,
-                                h=a["href"])
+                                h=anchor["href"]))
                 download = filedetails.replace("filedetails.php?",
                                                     "dl.php?")
-                yield ({"type": v,
-                        "file": a.text,
+                yield ({"type": mode,
+                        "file": anchor.text,
                         "filedetails": filedetails,
                         "download": download})
