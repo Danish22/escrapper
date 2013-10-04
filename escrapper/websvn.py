@@ -4,7 +4,8 @@ Scrapper thinking on produce an "API" fot the WebSVN portal.
 from __future__ import absolute_import
 from .exceptions import InvalidWebSVN
 from .escrapper import _BaseScrapper
-from . import utils
+from .utils import (ucode)
+
 
 class WebSVN(_BaseScrapper):
     """"WebSVN class, a way to produce an interface to WebSVN portals
@@ -20,7 +21,7 @@ class WebSVN(_BaseScrapper):
 
     def setrevision(self, rev):
         """ Change the current revision of the SVN """
-        if rev != None and rev != self.params.get('rev',''):
+        if rev is not None and rev != self.params.get('rev', ''):
             self.params['rev'] = rev
             self._seturl()
             self.soup = None
@@ -33,9 +34,9 @@ class WebSVN(_BaseScrapper):
 
     def gettemplate(self):
         """ Procedure to infer which template is using"""
-        if self.template == None:
+        if self.template is None:
             self.template = self.soup.find(id="template")\
-                                .find("option",selected="selected")\
+                                .find("option", selected="selected")\
                                 .text
         return self
 
@@ -43,7 +44,7 @@ class WebSVN(_BaseScrapper):
         """ Before change the revision do some previous checking"""
         def wrapper(self, rev=None):
             """ Wrapper to the actual function """
-            if self.setrevision(rev).soup == None:
+            if self.setrevision(rev).soup is None:
                 self.loadpage().gettemplate()
             return function(self, rev)
         return wrapper
@@ -52,13 +53,13 @@ class WebSVN(_BaseScrapper):
     def getinfo(self, rev=None):
         """ Get the general info of the current or given revision """
         try:
-            if self.template == utils.ucode("calm"):
+            if self.template == ucode("calm"):
                 thelist = self.soup.find(id="info")\
-                                    .find("ul")\
-                                    .find_all("li")
+                                   .find("ul")\
+                                   .find_all("li")
                 info = thelist[0].text + thelist[1].text
                 message = thelist[2].text
-            elif self.template == utils.ucode("Elegant"):
+            elif self.template == ucode("Elegant"):
                 info = self.soup.find(class_="info").text
                 message = self.soup.find(class_="msg").text
         except AttributeError:
@@ -71,18 +72,17 @@ class WebSVN(_BaseScrapper):
             revision
         """
         ## Loop the possible modes A = Added, M = Modified, D = Deleted
-        modes_list = utils.ucode,("AMD")
+        modes_list = ucode("AMD")
         for mode in modes_list:
             ## Search in the DOM tree for a "TR" element, with class v
             for cell in self.soup.find_all("tr", class_=mode):
                 ## for every TR search the anchor with class "path"
                 anchor = cell.find("td", class_="path").a
                 ## get the href
-                filedetails = utils.ucode("{u}/{h}"\
-                        .format(u=self.urlbase,
-                                h=anchor["href"]))
-                download = filedetails.replace("filedetails.php?",
-                                                    "dl.php?")
+                filedetails = ucode("{u}/{h}"\
+                                    .format(u=self.urlbase,
+                                    h=anchor["href"]))
+                download = filedetails.replace("filedetails.php?", "dl.php?")
                 yield ({"type": mode,
                         "file": anchor.text,
                         "filedetails": filedetails,
