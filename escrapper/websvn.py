@@ -79,9 +79,8 @@ class WebSVN(_BaseScrapper):
                 ## for every TR search the anchor with class "path"
                 anchor = cell.find("td", class_="path").a
                 ## get the href
-                filedetails = ucode("{u}/{h}"\
-                                    .format(u=self.urlbase,
-                                    h=anchor["href"]))
+                filedetails = ucode("{u}/{h}".format(u=self.urlbase,
+                                                     h=anchor["href"]))
                 download = filedetails.replace("filedetails.php?", "dl.php?")
                 yield ({"type": mode,
                         "file": anchor.text,
