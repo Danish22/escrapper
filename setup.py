@@ -4,10 +4,11 @@ from setuptools.command.test import test as TestCommand
 import io
 import os
 import sys
+import re
 
-import escrapper
 
 here = os.path.abspath(os.path.dirname(__file__))
+
 
 def read(*filenames, **kwargs):
     encoding = kwargs.get('encoding', 'utf-8')
@@ -20,11 +21,20 @@ def read(*filenames, **kwargs):
 
 long_description = read('README.rst')
 
+# match the version indicated in path.py
+with open('escrapper/__init__.py') as path_mod:
+    source = path_mod.read()
+    pattern = re.compile(r'''__version__ = ['"](?P<version>[\d.]+)['"]''')
+    version = pattern.search(source).group('version')
+
+
 class PyTest(TestCommand):
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
+    def __init__(self):
         self.test_args = []
         self.test_suite = True
+
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
 
     def run_tests(self):
         import pytest
@@ -33,14 +43,14 @@ class PyTest(TestCommand):
 
 setup(
     name='escrapper',
-    version=escrapper.__version__,
+    version=version,
     url='http://github.com/esparta/escrapper',
     license='Apache Software License',
-    author=escrapper.__author__,
+    author="Espartaco Palma",
     tests_require=['pytest'],
     install_requires=['beautifulsoup4>=4.3.1',
-                    'requests>=1.2.3'
-                    ],
+                      'requests>=1.2.3'
+                      ],
     cmdclass={'test': PyTest},
     author_email='esparta@gmail.com',
     description='Scrapping tool, can process WebSVN portal ',
@@ -49,7 +59,7 @@ setup(
     include_package_data=True,
     platforms='any',
     test_suite='escrapper.test_app',
-    classifiers = [
+    classifiers=[
         'Programming Language :: Python',
         'Development Status :: 1 - Beta',
         'Natural Language :: English',
@@ -59,7 +69,7 @@ setup(
         'Operating System :: OS Independent',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-        ],
+                 ],
     extras_require={
         'testing': ['pytest'],
     }
