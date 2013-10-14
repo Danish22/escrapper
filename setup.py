@@ -21,11 +21,9 @@ def read(*filenames, **kwargs):
 
 long_description = read('README.rst')
 
-# match the version indicated in path.py
-with open('escrapper/__init__.py') as path_mod:
-    source = path_mod.read()
-    pattern = re.compile(r'''__version__ = ['"](?P<version>[\d.]+)['"]''')
-    version = pattern.search(source).group('version')
+source = read('escrapper/__init__.py')
+pattern = re.compile(r'''__version__ = ['"](?P<version>[\d.]+)['"]''')
+version = pattern.search(source).group('version')
 
 
 class PyTest(TestCommand):
