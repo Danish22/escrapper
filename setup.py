@@ -29,12 +29,10 @@ with open('escrapper/__init__.py') as path_mod:
 
 
 class PyTest(TestCommand):
-    def __init__(self):
-        self.test_args = []
-        self.test_suite = True
-
     def finalize_options(self):
         TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
 
     def run_tests(self):
         import pytest
