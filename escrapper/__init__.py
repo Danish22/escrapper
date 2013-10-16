@@ -7,5 +7,5 @@ from .exceptions import InvalidWebSVN
 
 __all__ = ['WebSVN', 'InvalidWebSVN', ]
 __author__ = "Espartaco Palma"
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
