@@ -2,10 +2,9 @@
 Scrapper thinking on produce an "API" fot the WebSVN portal.
 """
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from .exceptions import InvalidWebSVN
 from .escrapper import _BaseScrapper
-from .utils import (ucode)
-
 
 class WebSVN(_BaseScrapper):
     """"WebSVN class, a way to produce an interface to WebSVN portals
@@ -53,13 +52,13 @@ class WebSVN(_BaseScrapper):
     def getinfo(self, rev=None):
         """ Get the general info of the current or given revision """
         try:
-            if self.template == ucode("calm"):
+            if self.template == "calm":
                 thelist = self.soup.find(id="info")\
                                    .find("ul")\
                                    .find_all("li")
                 info = thelist[0].text + thelist[1].text
                 message = thelist[2].text
-            elif self.template == ucode("Elegant"):
+            elif self.template == "Elegant":
                 info = self.soup.find(class_="info").text
                 message = self.soup.find(class_="msg").text
         except AttributeError:
@@ -72,15 +71,15 @@ class WebSVN(_BaseScrapper):
             revision
         """
         ## Loop the possible modes A = Added, M = Modified, D = Deleted
-        modes_list = ucode("AMD")
+        modes_list = "AMD"
         for mode in modes_list:
             ## Search in the DOM tree for a "TR" element, with class v
             for cell in self.soup.find_all("tr", class_=mode):
                 ## for every TR search the anchor with class "path"
                 anchor = cell.find("td", class_="path").a
                 ## get the href
-                filedetails = ucode("{u}/{h}".format(u=self.urlbase,
-                                                     h=anchor["href"]))
+                filedetails = "{u}/{h}".format(u=self.urlbase,
+                                                     h=anchor["href"])
                 download = filedetails.replace("filedetails.php?", "dl.php?")
                 yield ({"type": mode,
                         "file": anchor.text,
