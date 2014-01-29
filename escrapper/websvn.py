@@ -34,9 +34,12 @@ class WebSVN(_BaseScrapper):
     def gettemplate(self):
         """ Procedure to infer which template is using"""
         if self.template is None:
-            self.template = self.soup.find(id="template")\
-                                .find("option", selected="selected")\
-                                .text
+            try:
+                self.template = self.soup.find(id="template")\
+                                    .find("option", selected="selected")\
+                                    .text
+            except Exception:
+                raise InvalidWebSVN()
         return self
 
     def _checkrevision(function):
@@ -51,18 +54,15 @@ class WebSVN(_BaseScrapper):
     @_checkrevision
     def getinfo(self, rev=None):
         """ Get the general info of the current or given revision """
-        try:
-            if self.template == "calm":
-                thelist = self.soup.find(id="info")\
-                                   .find("ul")\
-                                   .find_all("li")
-                info = thelist[0].text + thelist[1].text
-                message = thelist[2].text
-            elif self.template == "Elegant":
-                info = self.soup.find(class_="info").text
-                message = self.soup.find(class_="msg").text
-        except AttributeError:
-            raise InvalidWebSVN()
+        if self.template == "calm":
+            thelist = self.soup.find(id="info")\
+                               .find("ul")\
+                               .find_all("li")
+            info = thelist[0].text + thelist[1].text
+            message = thelist[2].text
+        elif self.template == "Elegant":
+            info = self.soup.find(class_="info").text
+            message = self.soup.find(class_="msg").text
         return (info, message)
 
     @_checkrevision

@@ -1,6 +1,7 @@
 """ Test suit for escrapper package """
 
-from escrapper import WebSVN
+from escrapper import WebSVN, InvalidWebSVN
+import pytest
 
 ## Test URLs
 URLS = {"elegant": ("http://websvn.meneame.net",
@@ -28,12 +29,15 @@ def test_getchanges():
     """ Test if we can get the Changes of the current revision"""
     for test_object in OBJS.values():
         ## is an iterable? in this case it should be a generator
-        assert hasattr(test_object.getchanges(), '__iter__')
+        for changes in test_object.getchanges():
+            assert hasattr(changes, '__iter__')
 
 def test_setrevision():
     """ Test if we can set the revision """
     assert OBJS["elegant"].setrevision(3150).params['rev'] == 3150
 
-
-
-
+def test_InvalidWebSVN():
+    """ Test if ww have an error with an no-WebSVN site """
+    with pytest.raises(InvalidWebSVN):
+        websvn_test = WebSVN("http://google.com")
+        websvn_test.getinfo()
