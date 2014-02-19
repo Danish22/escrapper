@@ -30,7 +30,7 @@ test:
 	python setup.py test
 
 test-all:
-	tox
+	tox -e py27,py27verbose,py33,py33verbose
 
 coverage:
 	coverage run --source escrapper setup.py test

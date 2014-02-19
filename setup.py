@@ -26,15 +26,16 @@ pattern = re.compile(r'''__version__ = ['"](?P<version>[\d.]+)['"]''')
 version = pattern.search(source).group('version')
 
 
-class PyTest(TestCommand):
+class Tox(TestCommand):
     def finalize_options(self):
         TestCommand.finalize_options(self)
         self.test_args = []
         self.test_suite = True
 
     def run_tests(self):
-        import pytest
-        errcode = pytest.main(self.test_args)
+        #import here, cause outside the eggs aren't loaded
+        import tox
+        errcode = tox.cmdline(self.test_args)
         sys.exit(errcode)
 
 setup(
@@ -43,11 +44,11 @@ setup(
     url='http://github.com/esparta/escrapper',
     license='Apache Software License',
     author="Espartaco Palma",
-    tests_require=['pytest'],
+    tests_require=['tox'],
     install_requires=['beautifulsoup4>=4.3.1',
                       'requests>=1.2.3'
                       ],
-    cmdclass={'test': PyTest},
+    cmdclass={'test': Tox},
     author_email='esparta@gmail.com',
     description='Scrapping tool, can process WebSVN portal ',
     long_description=long_description,
