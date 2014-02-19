@@ -65,8 +65,6 @@ setup(
         'Operating System :: OS Independent',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-                 ],
-    extras_require={
-        'testing': ['pytest'],
-    }
+        ],
+    extras_require={'testing': ['pytest'], }
 )

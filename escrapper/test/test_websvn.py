@@ -5,10 +5,10 @@ import pytest
 
 ## Test URLs
 URLS = {"elegant": ("http://websvn.meneame.net",
-                    {'repname':"meneame",
+                    {'repname': "meneame",
                      'rev': 3138}),
         "calm": ("http://demo.websvn.info",
-                 {'repname':"WebSVN"})}
+                 {'repname': "WebSVN"})}
 OBJS = {}
 
 for k, v in URLS.items():
@@ -20,24 +20,28 @@ def test_created():
     for test_object in OBJS.values():
         assert isinstance(test_object, WebSVN)
 
+
 def test_getinfo():
     """ Test if we can getinfo of the current revision """
     for test_object in OBJS.values():
         assert isinstance(test_object.getinfo(), tuple)
 
+
 def test_getchanges():
     """ Test if we can get the Changes of the current revision"""
     for test_object in OBJS.values():
         ## is an iterable? in this case it should be a generator
-        for changes in test_object.getchanges():
-            assert hasattr(changes, '__iter__')
+        changes = test_object.getchanges()
+        assert hasattr(next(changes), '__iter__')
+
 
 def test_setrevision():
     """ Test if we can set the revision """
     assert OBJS["elegant"].setrevision(3150).params['rev'] == 3150
 
+
 def test_InvalidWebSVN():
-    """ Test if ww have an error with an no-WebSVN site """
+    """ Test if we have an error with a no-WebSVN site """
     with pytest.raises(InvalidWebSVN):
         websvn_test = WebSVN("http://google.com")
         websvn_test.getinfo()

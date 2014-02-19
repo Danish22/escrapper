@@ -15,7 +15,6 @@ class _BaseScrapper(object):
         self.soup = None
         self.params = params or {}
 
-
     def seturl(self, page=None):
         """" set URL to processes with Requests.get() """
         self.url = "{url}/{page}".format(url=self.urlbase,

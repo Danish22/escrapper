@@ -8,4 +8,3 @@ from .exceptions import InvalidWebSVN
 __all__ = ['WebSVN', 'InvalidWebSVN', ]
 __author__ = "Espartaco Palma"
 __version__ = "0.3.0"
-

@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from .exceptions import InvalidWebSVN
 from .escrapper import _BaseScrapper
 
+
 class WebSVN(_BaseScrapper):
     """"WebSVN class, a way to produce an interface to WebSVN portals
         exposes a variety of methods to do an "API" to the data:
@@ -79,7 +80,7 @@ class WebSVN(_BaseScrapper):
                 anchor = cell.find("td", class_="path").a
                 ## get the href
                 filedetails = "{u}/{h}".format(u=self.urlbase,
-                                                     h=anchor["href"])
+                                               h=anchor["href"])
                 download = filedetails.replace("filedetails.php?", "dl.php?")
                 yield ({"type": mode,
                         "file": anchor.text,
