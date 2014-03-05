@@ -40,7 +40,7 @@ def test_setrevision():
     assert OBJS["elegant"].setrevision(3150).params['rev'] == 3150
 
 
-def test_InvalidWebSVN():
+def test_invalidwebsvn():
     """ Test if we have an error with a no-WebSVN site """
     with pytest.raises(InvalidWebSVN):
         websvn_test = WebSVN("http://google.com")

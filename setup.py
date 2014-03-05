@@ -1,3 +1,9 @@
+"""
+Setup.py for eScrapper, modules to do scrapping on version control portals,
+providing some kind of "API"
+"""
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
@@ -7,26 +13,28 @@ import sys
 import re
 
 
-here = os.path.abspath(os.path.dirname(__file__))
+HERE = os.path.abspath(os.path.dirname(__file__))
 
 
 def read(*filenames, **kwargs):
+    """ Read a python's file """
     encoding = kwargs.get('encoding', 'utf-8')
     sep = kwargs.get('sep', '\n')
     buf = []
     for filename in filenames:
-        with io.open(filename, encoding=encoding) as f:
-            buf.append(f.read())
+        with io.open(filename, encoding=encoding) as current_file:
+            buf.append(current_file.read())
     return sep.join(buf)
 
-long_description = read('README.rst')
+LONG_DESCRIPTION = read('README.rst')
 
-source = read('escrapper/__init__.py')
-pattern = re.compile(r'''__version__ = ['"](?P<version>[\d.]+)['"]''')
-version = pattern.search(source).group('version')
+SOURCE = read('escrapper/__init__.py')
+PATTERN = re.compile(r'''__version__ = ['"](?P<version>[\d.]+)['"]''')
+VERSION = PATTERN.search(SOURCE).group('version')
 
 
 class PyTest(TestCommand):
+    """ Mixin to integrate pytest with setup.py """
     def finalize_options(self):
         TestCommand.finalize_options(self)
         self.test_args = []
@@ -39,7 +47,7 @@ class PyTest(TestCommand):
 
 setup(
     name='escrapper',
-    version=version,
+    version=VERSION,
     url='http://github.com/esparta/escrapper',
     license='Apache Software License',
     author="Espartaco Palma",
@@ -50,7 +58,7 @@ setup(
     cmdclass={'test': PyTest},
     author_email='esparta@gmail.com',
     description='Scrapping tool, can process WebSVN portal ',
-    long_description=long_description,
+    long_description=LONG_DESCRIPTION,
     packages=['escrapper'],
     include_package_data=True,
     platforms='any',
