@@ -21,7 +21,7 @@ class WebSVN(_BaseScrapper):
 
     def setrevision(self, rev):
         """ Change the current revision of the SVN """
-        if rev is not None and rev != self.params.get('rev', ''):
+        if rev and rev != self.params.get('rev', ''):
             self.params['rev'] = rev
             self._seturl()
             self.soup = None
